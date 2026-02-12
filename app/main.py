@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.colors import ListedColormap
+from matplotlib.ticker import MultipleLocator, AutoMinorLocator
 import lasio
 import io
 import warnings
@@ -926,17 +927,32 @@ if uploaded_files:
                         fontsize=14, fontweight='bold', y=1.0)
             
             # Configurar límites Y y escala superior para todos los tracks
+            # Calcular intervalo apropiado para los ticks de profundidad
+            depth_range = depth_max - depth_min
+            if depth_range <= 100:
+                major_interval = 10
+            elif depth_range <= 500:
+                major_interval = 50
+            elif depth_range <= 1000:
+                major_interval = 100
+            elif depth_range <= 2000:
+                major_interval = 200
+            else:
+                major_interval = 500
+            
             for i, ax in enumerate(axes):
                 ax.set_ylim(depth_max, depth_min)
                 ax.grid(True, alpha=0.3, linestyle='--', linewidth=0.5)
-                ax.tick_params(axis='y', labelsize=7)
+                ax.tick_params(axis='y', labelsize=7, left=True, labelleft=(i == 0))
                 ax.tick_params(axis='x', labelsize=6, top=True, bottom=False, labeltop=True, labelbottom=False)
                 ax.xaxis.set_ticks_position('top')
+                ax.yaxis.set_major_locator(MultipleLocator(major_interval))
+                ax.yaxis.set_minor_locator(AutoMinorLocator(2))
                 ax.margins(0)
-                if i > 0:
-                    ax.set_yticklabels([])
                 if i == 0:
                     ax.set_ylabel('Profundidad (ft)', fontsize=9, fontweight='bold')
+                    ax.tick_params(axis='y', which='major', labelsize=7, left=True, labelleft=True)
+                    ax.tick_params(axis='y', which='minor', left=True, length=3)
             
             # Track 1: GR
             ax = axes[0]
