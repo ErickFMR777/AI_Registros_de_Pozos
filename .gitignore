@@ -35,11 +35,9 @@ MANIFEST
 *.swp
 *.swo
 *~
-.DS_Store
 
 # Jupyter Notebook
 .ipynb_checkpoints
-*.ipynb
 
 # Local development
 .env
@@ -51,5 +49,6 @@ MANIFEST
 .DS_Store
 Thumbs.db
 
-# Streamlit
-.streamlit/
+# Temporal
+/tmp/
+*.tmp

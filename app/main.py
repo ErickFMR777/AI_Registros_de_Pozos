@@ -1,5 +1,5 @@
 # ==========================================================
-# APLICACIÓN STREAMLIT: ANÁLISIS PETROFÍSICO
+# APLICACIÓN STREAMLIT: INTERPRETACIÓN DE REGISTROS DE POZOS
 # ==========================================================
 import streamlit as st
 import pandas as pd
@@ -24,7 +24,7 @@ from modules.pdf_batch_export import create_pdf_batch_report
 # CONFIGURACIÓN DE STREAMLIT
 # ==========================================================
 st.set_page_config(
-    page_title="Análisis Petrofísico Preliminar Automatizado",
+    page_title="Interpretación Automatizada de Registros de Pozos",
     page_icon="🪨",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -32,9 +32,391 @@ st.set_page_config(
 
 st.markdown("""
     <style>
-    .main { padding: 2rem; }
-    h1 { color: #1f77b4; }
-    h2 { color: #1f77b4; margin-top: 2rem; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+    
+    /* === GLOBAL === */
+    .main { padding: 1rem 2rem; }
+    html, body, [class*="css"] { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important; }
+    h1, h2, h3 { font-family: 'Inter', sans-serif !important; }
+    h1 { color: #0f172a; font-weight: 800; letter-spacing: -0.5px; }
+    h2 { color: #1e293b; margin-top: 1.5rem; font-weight: 700; font-size: 1.25rem; }
+    h3 { color: #334155; font-weight: 600; }
+    
+    /* === HIDE DEFAULT HEADER === */
+    header[data-testid="stHeader"] { background: transparent; }
+    
+    /* === SIDEBAR === */
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%) !important;
+    }
+    section[data-testid="stSidebar"] * {
+        color: #e2e8f0 !important;
+    }
+    section[data-testid="stSidebar"] .stSlider label {
+        color: #94a3b8 !important;
+        font-size: 0.82rem !important;
+        font-weight: 500 !important;
+    }
+    section[data-testid="stSidebar"] h1, 
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] h3 {
+        color: #f1f5f9 !important;
+    }
+    
+    /* === HERO === */
+    .hero-container {
+        background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 40%, #0c4a6e 70%, #164e63 100%);
+        border-radius: 20px;
+        padding: 2.5rem 3rem 2rem;
+        margin-bottom: 1.2rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.35), 
+                    0 0 0 1px rgba(255,255,255,0.05) inset;
+    }
+    .hero-container::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: radial-gradient(ellipse at 20% 80%, rgba(56, 189, 248, 0.12) 0%, transparent 55%),
+                    radial-gradient(ellipse at 80% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 55%),
+                    radial-gradient(ellipse at 50% 50%, rgba(14, 165, 233, 0.04) 0%, transparent 70%);
+        pointer-events: none;
+    }
+    .hero-container::after {
+        content: '';
+        position: absolute;
+        top: -1px; right: -1px; bottom: -1px; left: -1px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), transparent 40%, transparent 60%, rgba(99, 102, 241, 0.1));
+        pointer-events: none;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        padding: 1px;
+    }
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: rgba(56, 189, 248, 0.1);
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        color: #7dd3fc;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 0.3rem 0.85rem;
+        border-radius: 50px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+        backdrop-filter: blur(4px);
+    }
+    .hero-badge::before {
+        content: '';
+        width: 6px; height: 6px;
+        background: #38bdf8;
+        border-radius: 50%;
+        box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
+    }
+    .hero-title {
+        color: #ffffff !important;
+        font-size: 1.85rem;
+        font-weight: 900;
+        letter-spacing: -0.5px;
+        margin: 0;
+        line-height: 1.2;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 0 40px rgba(56, 189, 248, 0.3), 0 2px 10px rgba(0,0,0,0.4);
+    }
+    .hero-container h1 {
+        color: #ffffff !important;
+    }
+    .hero-subtitle {
+        color: rgba(148, 163, 184, 0.95);
+        font-size: 0.95rem;
+        font-weight: 400;
+        margin: 0.6rem 0 0;
+        line-height: 1.5;
+        position: relative;
+        z-index: 1;
+        max-width: 600px;
+    }
+    .hero-divider {
+        width: 48px; height: 3px;
+        background: linear-gradient(90deg, #38bdf8, #818cf8);
+        border-radius: 2px;
+        margin: 1rem 0 0.6rem;
+        position: relative;
+        z-index: 1;
+    }
+    .hero-stats {
+        display: flex;
+        gap: 2rem;
+        margin-top: 1.2rem;
+        position: relative;
+        z-index: 1;
+    }
+    .hero-stat {
+        display: flex;
+        flex-direction: column;
+    }
+    .hero-stat-value {
+        color: #ffffff;
+        font-size: 1.3rem;
+        font-weight: 800;
+        line-height: 1;
+    }
+    .hero-stat-label {
+        color: #94a3b8;
+        font-size: 0.65rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        margin-top: 0.25rem;
+    }
+    
+    /* === FEATURE CARDS === */
+    .feature-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1.3rem 1rem;
+        text-align: center;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        position: relative;
+        overflow: hidden;
+    }
+    .feature-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #0ea5e9, #6366f1);
+        opacity: 0;
+        transition: opacity 0.25s ease;
+    }
+    .feature-card:hover {
+        border-color: #cbd5e1;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+        transform: translateY(-2px);
+    }
+    .feature-card:hover::before {
+        opacity: 1;
+    }
+    .feature-icon {
+        width: 44px; height: 44px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        margin: 0 auto 0.6rem;
+    }
+    .icon-blue { background: linear-gradient(135deg, #eff6ff, #dbeafe); }
+    .icon-purple { background: linear-gradient(135deg, #f5f3ff, #ede9fe); }
+    .icon-emerald { background: linear-gradient(135deg, #ecfdf5, #d1fae5); }
+    .icon-amber { background: linear-gradient(135deg, #fffbeb, #fef3c7); }
+    .feature-title {
+        color: #1e293b;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.2px;
+    }
+    .feature-desc {
+        color: #94a3b8;
+        font-size: 0.72rem;
+        margin: 0.15rem 0 0;
+        font-weight: 400;
+    }
+    
+    /* === SECTION HEADERS === */
+    .section-header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        padding: 0.6rem 0;
+        margin: 1.5rem 0 0.8rem;
+        border-bottom: 2px solid #f1f5f9;
+    }
+    .section-number {
+        width: 28px; height: 28px;
+        background: linear-gradient(135deg, #0f172a, #1e3a5f);
+        color: white;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.75rem;
+        font-weight: 800;
+        flex-shrink: 0;
+    }
+    .section-title {
+        color: #0f172a;
+        font-size: 1.05rem;
+        font-weight: 700;
+        margin: 0;
+        letter-spacing: -0.3px;
+    }
+    
+    /* === METRIC CARDS === */
+    div[data-testid="stMetric"] {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 1rem 1.2rem;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    div[data-testid="stMetric"] label {
+        color: #64748b !important;
+        font-size: 0.78rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.3px;
+    }
+    div[data-testid="stMetric"] [data-testid="stMetricValue"] {
+        color: #0f172a !important;
+        font-size: 1.5rem !important;
+        font-weight: 800 !important;
+    }
+    
+    /* === DATAFRAMES === */
+    .stDataFrame {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
+    }
+    
+    /* === BUTTONS === */
+    .stDownloadButton > button {
+        background: linear-gradient(135deg, #0f172a, #1e3a5f) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 0.6rem 1.5rem !important;
+        font-weight: 600 !important;
+        font-size: 0.85rem !important;
+        transition: all 0.2s ease !important;
+        box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2) !important;
+    }
+    .stDownloadButton > button:hover {
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.3) !important;
+    }
+    
+    /* === FILE UPLOADER === */
+    div[data-testid="stFileUploader"] {
+        border: 2px dashed #cbd5e1;
+        border-radius: 16px;
+        padding: 0.5rem;
+        background: #f8fafc;
+        transition: all 0.2s ease;
+    }
+    div[data-testid="stFileUploader"]:hover {
+        border-color: #0ea5e9;
+        background: #f0f9ff;
+    }
+    
+    /* === ALERTS === */
+    .stAlert {
+        border-radius: 12px !important;
+    }
+    
+    /* === EXPANDER === */
+    .streamlit-expanderHeader {
+        font-weight: 600 !important;
+        color: #1e293b !important;
+        font-size: 0.95rem !important;
+    }
+    
+    /* === SEPARATOR === */
+    hr {
+        border: none;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, #e2e8f0 20%, #e2e8f0 80%, transparent);
+        margin: 1.5rem 0;
+    }
+    
+    /* === EMPTY STATE === */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+        border: 2px dashed #cbd5e1;
+        border-radius: 20px;
+        margin-top: 1rem;
+    }
+    .empty-state-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+        opacity: 0.7;
+    }
+    .empty-state-title {
+        color: #334155;
+        font-size: 1.15rem;
+        font-weight: 700;
+        margin: 0;
+    }
+    .empty-state-desc {
+        color: #64748b;
+        font-size: 0.88rem;
+        font-weight: 400;
+        margin: 0.4rem 0 0;
+        max-width: 500px;
+        display: inline-block;
+    }
+    .capability-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+        max-width: 550px;
+        margin: 1.5rem auto 0;
+        text-align: left;
+    }
+    .capability-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.8rem;
+        background: white;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        font-size: 0.78rem;
+        color: #475569;
+        font-weight: 500;
+    }
+    .capability-check {
+        color: #10b981;
+        font-weight: 700;
+        font-size: 0.85rem;
+    }
+    
+    /* === WELL BANNER === */
+    .well-banner {
+        background: linear-gradient(135deg, #f0f9ff, #e0f2fe);
+        border: 1px solid #bae6fd;
+        border-left: 4px solid #0284c7;
+        border-radius: 12px;
+        padding: 0.8rem 1.2rem;
+        margin-bottom: 1rem;
+    }
+    .well-banner-name {
+        color: #0c4a6e;
+        font-size: 1.1rem;
+        font-weight: 800;
+        margin: 0;
+        letter-spacing: -0.3px;
+    }
+    .well-banner-meta {
+        color: #0369a1;
+        font-size: 0.78rem;
+        margin: 0.15rem 0 0;
+        font-weight: 500;
+    }
     </style>
 """, unsafe_allow_html=True)
 
@@ -122,45 +504,81 @@ def display_las_viewer(df, file_index):
 # ==========================================================
 # MAIN
 # ==========================================================
-# Interfaz inicial profesional - Rediseño limpio
+# Interfaz inicial profesional - Hero Section
 st.markdown("""
-<div style="text-align: center; padding: 1.5rem 0 2.5rem 0;">
-    <h1 style="color: #1f77b4; font-size: 2.5em; margin: 0; font-weight: 700;">🪨 ANÁLISIS PETROFÍSICO</h1>
-    <p style="color: #666; font-size: 1.05em; margin: 0.5rem 0 0 0; font-weight: 300;">Registros de Pozos - Procesamiento Profesional</p>
+<div class="hero-container">
+    <div class="hero-badge">Petrofísica Computacional</div>
+    <h1 class="hero-title">INTERPRETACIÓN AUTOMATIZADA<br/>DE REGISTROS DE POZOS</h1>
+    <div class="hero-divider"></div>
+    <p class="hero-subtitle">Herramienta para el procesamiento preliminar automatizado de registros de pozos</p>
+    <div class="hero-stats">
+        <div class="hero-stat">
+            <span class="hero-stat-value">8</span>
+            <span class="hero-stat-label">Tracks</span>
+        </div>
+        <div class="hero-stat">
+            <span class="hero-stat-value">40+</span>
+            <span class="hero-stat-label">Alias de curvas</span>
+        </div>
+        <div class="hero-stat">
+            <span class="hero-stat-value">3</span>
+            <span class="hero-stat-label">Formatos export</span>
+        </div>
+    </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Características en fila compacta
-col1, col2, col3 = st.columns(3, gap="small")
+# Características en tarjetas limpias
+col1, col2, col3, col4 = st.columns(4, gap="small")
 with col1:
     st.markdown("""
-    <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 1rem; border-radius: 8px; border-left: 3px solid #667eea; text-align: center;">
-    <p style="margin: 0; font-size: 0.9em;"><b>8 Tracks</b><br/>Visualización profesional</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-with col2:
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 1rem; border-radius: 8px; border-left: 3px solid #667eea; text-align: center;">
-    <p style="margin: 0; font-size: 0.9em;"><b>Multi-pozo</b><br/>Procesamiento lote</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-with col3:
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%); padding: 1rem; border-radius: 8px; border-left: 3px solid #667eea; text-align: center;">
-    <p style="margin: 0; font-size: 0.9em;"><b>3 Formatos</b><br/>PDF, Excel, CSV</p>
+    <div class="feature-card">
+        <div class="feature-icon icon-blue">📊</div>
+        <p class="feature-title">Visualización</p>
+        <p class="feature-desc">Registro profesional de 8 tracks</p>
     </div>
     """, unsafe_allow_html=True)
 
-st.markdown("<div style='height: 0.5rem;'></div>", unsafe_allow_html=True)
+with col2:
+    st.markdown("""
+    <div class="feature-card">
+        <div class="feature-icon icon-purple">⛏️</div>
+        <p class="feature-title">Multi-Pozo</p>
+        <p class="feature-desc">Procesamiento simultáneo por lotes</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col3:
+    st.markdown("""
+    <div class="feature-card">
+        <div class="feature-icon icon-emerald">📄</div>
+        <p class="feature-title">Exportación</p>
+        <p class="feature-desc">Reportes en PDF, Excel y CSV</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+with col4:
+    st.markdown("""
+    <div class="feature-card">
+        <div class="feature-icon icon-amber">🔬</div>
+        <p class="feature-title">Análisis</p>
+        <p class="feature-desc">Litología, Net Pay y saturación</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("<div style='height: 0.2rem;'></div>", unsafe_allow_html=True)
 
 # Upload de múltiples archivos
 uploaded_files = st.file_uploader("📤 Carga uno o más archivos LAS (.las)", type=['las'], accept_multiple_files=True, key='las_files', label_visibility="visible")
 
 if uploaded_files:
     total_files = len(uploaded_files)
-    st.info(f"📊 {total_files} archivo(s) para procesar")
+    st.markdown(f"""
+    <div style="display: flex; align-items: center; gap: 0.6rem; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 0.6rem 1rem; margin-bottom: 0.5rem;">
+        <span style="font-size: 1.2rem;">📊</span>
+        <span style="color: #0c4a6e; font-weight: 600; font-size: 0.9rem;">{total_files} archivo(s) listos para procesar</span>
+    </div>
+    """, unsafe_allow_html=True)
     
     # Almacenar datos de todos los pozos
     all_wells_data = []
@@ -183,7 +601,12 @@ if uploaded_files:
             
             well_name = uploaded_file.name.replace('.las', '').upper()
             
-            st.success(f"✓ {well_name}: {len(df.columns)} columnas, {len(df)} muestras")
+            st.markdown(f"""
+            <div class="well-banner">
+                <p class="well-banner-name">🛢️ {well_name}</p>
+                <p class="well-banner-meta">{len(df.columns)} columnas · {len(df)} muestras · Archivo {file_idx} de {total_files}</p>
+            </div>
+            """, unsafe_allow_html=True)
             
             # ======================================================
             # EXPLORADOR DE DATOS
@@ -193,7 +616,7 @@ if uploaded_files:
             # ======================================================
             # PASO 1: IDENTIFICAR PROFUNDIDAD
             # ======================================================
-            st.subheader(f"1️⃣ Identificación de Profundidad")
+            st.markdown('<div class="section-header"><span class="section-number">1</span><span class="section-title">Identificación de Profundidad</span></div>', unsafe_allow_html=True)
             
             depth_aliases = ['DEPTH', 'DEPT', 'MD', 'MEASURED_DEPTH', 'TVD', 'TVDSS', 
                             'TDEP', 'MD_FT', 'DEPTM', 'INDEX']
@@ -225,7 +648,7 @@ if uploaded_files:
             # ======================================================
             # PASO 2: MAPEO DE CURVAS
             # ======================================================
-            st.subheader("2️⃣ Mapeo de Curvas Disponibles")
+            st.markdown('<div class="section-header"><span class="section-number">2</span><span class="section-title">Mapeo de Curvas Disponibles</span></div>', unsafe_allow_html=True)
             
             curve_aliases = {
                 'CALI': ['CALI', 'CAL', 'CAL1', 'CALIPER'],
@@ -263,7 +686,7 @@ if uploaded_files:
             # ======================================================
             # PASO 3: DETECCIÓN DE MATRIZ
             # ======================================================
-            st.subheader("3️⃣ Detección de Matriz Dominante")
+            st.markdown('<div class="section-header"><span class="section-number">3</span><span class="section-title">Detección de Matriz Dominante</span></div>', unsafe_allow_html=True)
             
             dominant_matrix, dominant_rho = detect_dominant_matrix(df)
             PetroConfig.DOMINANT_MATRIX = dominant_matrix
@@ -284,7 +707,7 @@ if uploaded_files:
             # ======================================================
             # PASO 4: CÁLCULOS PETROFÍSICOS
             # ======================================================
-            st.subheader("4️⃣ Cálculos Petrofísicos")
+            st.markdown('<div class="section-header"><span class="section-number">4</span><span class="section-title">Cálculos Petrofísicos</span></div>', unsafe_allow_html=True)
             
             progress = st.progress(0)
             
@@ -415,11 +838,7 @@ if uploaded_files:
             # ======================================================
             # RESUMEN ESTADÍSTICO
             # ======================================================
-            st.subheader("📊 Resumen Estadístico")
-            # ======================================================
-            # RESUMEN ESTADÍSTICO
-            # ======================================================
-            st.subheader("📊 Resumen Estadístico")
+            st.markdown('<div class="section-header"><span class="section-number">5</span><span class="section-title">Resumen Estadístico</span></div>', unsafe_allow_html=True)
             
             stats_dict = {}
             
@@ -459,7 +878,7 @@ if uploaded_files:
             
             # Distribución litológica - Mejorada
             if 'LITOLOGIA' in df.columns:
-                st.subheader("🪨 Distribución Litológica")
+                st.markdown('<div class="section-header"><span class="section-number">6</span><span class="section-title">Distribución Litológica</span></div>', unsafe_allow_html=True)
                 lith_counts = df['LITOLOGIA'].value_counts()
                 lith_pct = (lith_counts / len(df) * 100).round(1)
                 
@@ -495,7 +914,7 @@ if uploaded_files:
             # ======================================================
             # VISUALIZACIÓN DEL REGISTRO
             # ======================================================
-            st.subheader("📈 Registro Petrofísico")
+            st.markdown('<div class="section-header"><span class="section-number">7</span><span class="section-title">Registro Petrofísico — 8 Tracks</span></div>', unsafe_allow_html=True)
             
             depth_min_data, depth_max_data = get_valid_data_range(df)
             depth_min = depth_min_data
@@ -689,7 +1108,7 @@ if uploaded_files:
             # ======================================================
             # EXPORTACIÓN
             # ======================================================
-            st.subheader("💾 Exportación de Resultados")
+            st.markdown('<div class="section-header"><span class="section-number">8</span><span class="section-title">Exportación de Resultados</span></div>', unsafe_allow_html=True)
             
             col1, col2, col3 = st.columns(3)
             
@@ -775,7 +1194,7 @@ if uploaded_files:
     # ======================================================
     if all_wells_data:
         st.markdown("---")
-        st.subheader("📦 Exportación Consolidada (Todos los Pozos)")
+        st.markdown('<div class="section-header"><span class="section-number">★</span><span class="section-title">Exportación Consolidada — Todos los Pozos</span></div>', unsafe_allow_html=True)
         
         col1, col2 = st.columns(2)
         
@@ -815,19 +1234,20 @@ if uploaded_files:
         st.success(f"✅ {len(all_wells_data)} pozo(s) procesado(s) exitosamente")
 
 else:
-    st.info("👆 Carga archivos LAS para comenzar")
     st.markdown("""
-    ### 📋 Características:
-    
-    - ✅ **Lectura automática de LAS** - Detecta columnas de profundidad
-    - ✅ **Explorador de datos** - Visualiza y analiza columnas del archivo
-    - ✅ **Selector de columnas** - Elige qué datos inspeccionar
-    - ✅ **Procesamiento batch** - Múltiples archivos simultáneamente
-    - ✅ **Mapeo flexible** - 40+ alias de nombres de curvas
-    - ✅ **Detección de matriz** - Identifica automáticamente ARENISCA/CALIZA/DOLOMITA
-    - ✅ **Cálculos completos** - VSH, Porosidad, Saturación, Permeabilidad
-    - ✅ **Visualización profesional** - Registro de 8 tracks
-    - ✅ **Exportación múltiple** - CSV, Excel, PDF
-    
-    ### 🔧 Parámetros ajustables en el panel lateral
-    """)
+    <div class="empty-state">
+        <div class="empty-state-icon">📂</div>
+        <p class="empty-state-title">Carga archivos LAS para comenzar el análisis</p>
+        <p class="empty-state-desc">Arrastra o selecciona uno o más archivos .LAS para procesarlos automáticamente</p>
+        <div class="capability-grid">
+            <div class="capability-item"><span class="capability-check">✓</span> Lectura automática de LAS</div>
+            <div class="capability-item"><span class="capability-check">✓</span> Mapeo flexible de curvas</div>
+            <div class="capability-item"><span class="capability-check">✓</span> Detección de matriz</div>
+            <div class="capability-item"><span class="capability-check">✓</span> Cálculos petrofísicos</div>
+            <div class="capability-item"><span class="capability-check">✓</span> Visualización 8 tracks</div>
+            <div class="capability-item"><span class="capability-check">✓</span> Procesamiento batch</div>
+            <div class="capability-item"><span class="capability-check">✓</span> Exportación PDF/Excel/CSV</div>
+            <div class="capability-item"><span class="capability-check">✓</span> Litología y Net Pay</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
