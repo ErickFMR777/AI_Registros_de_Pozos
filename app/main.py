@@ -923,13 +923,15 @@ if uploaded_files:
             # Crear figura simple con 8 subplots - Tamaño optimizado
             fig, axes = plt.subplots(1, 8, figsize=(18, 8), sharey='row', facecolor='white')
             fig.suptitle(f"Registro: {well_name.upper().replace('.LAS', '')}", 
-                        fontsize=14, fontweight='bold', y=0.98)
+                        fontsize=14, fontweight='bold', y=1.0)
             
-            # Configurar límites Y para todos los tracks
+            # Configurar límites Y y escala superior para todos los tracks
             for i, ax in enumerate(axes):
                 ax.set_ylim(depth_max, depth_min)
                 ax.grid(True, alpha=0.3, linestyle='--', linewidth=0.5)
-                ax.tick_params(labelsize=7)
+                ax.tick_params(axis='y', labelsize=7)
+                ax.tick_params(axis='x', labelsize=6, top=True, bottom=False, labeltop=True, labelbottom=False)
+                ax.xaxis.set_ticks_position('top')
                 ax.margins(0)
                 if i > 0:
                     ax.set_yticklabels([])
@@ -946,8 +948,8 @@ if uploaded_files:
                 ax.set_xlim(0, 150)
             else:
                 ax.set_xlim(0, 150)
-            ax.set_title('GR', fontweight='bold', fontsize=9)
-            ax.set_xlabel('API', fontsize=7)
+            ax.set_title('GR\n(API)', fontweight='bold', fontsize=8, pad=18)
+            
             
             # Track 2: RHOB
             ax = axes[1]
@@ -959,8 +961,8 @@ if uploaded_files:
                 ax.set_xlim(2.95, 1.95)
             else:
                 ax.set_xlim(2.95, 1.95)
-            ax.set_title('RHOB', fontweight='bold', fontsize=9, color='red')
-            ax.set_xlabel('g/cc', fontsize=7)
+            ax.set_title('RHOB\n(g/cc)', fontweight='bold', fontsize=8, color='red', pad=18)
+            
             
             # Track 3: NPHI
             ax = axes[2]
@@ -972,8 +974,8 @@ if uploaded_files:
                 ax.set_xlim(0.45, -0.15)
             else:
                 ax.set_xlim(0.45, -0.15)
-            ax.set_title('NPHI', fontweight='bold', fontsize=9, color='blue')
-            ax.set_xlabel('v/v', fontsize=7)
+            ax.set_title('NPHI\n(v/v)', fontweight='bold', fontsize=8, color='blue', pad=18)
+            
             
             # Track 4: Resistividad - Todas las curvas disponibles
             ax = axes[3]
@@ -1037,8 +1039,8 @@ if uploaded_files:
             
             ax.grid(True, alpha=0.3, which='both')
             ax.legend(loc='upper right', fontsize=5, ncol=2)
-            ax.set_title('RESISTIVITY', fontweight='bold', fontsize=9, color='darkred')
-            ax.set_xlabel('ohm-m', fontsize=7)
+            ax.set_title('RESISTIVIDAD\n(ohm·m)', fontweight='bold', fontsize=8, color='darkred', pad=18)
+            
             
             # Track 5: Porosidad
             ax = axes[4]
@@ -1052,8 +1054,8 @@ if uploaded_files:
                 ax.set_xlim(-0.02, 0.45)
             else:
                 ax.set_xlim(-0.02, 0.45)
-            ax.set_title('PHI_E', fontweight='bold', fontsize=9, color='cyan')
-            ax.set_xlabel('v/v', fontsize=7)
+            ax.set_title('PHI_E\n(v/v)', fontweight='bold', fontsize=8, color='darkcyan', pad=18)
+            
             
             # Track 6: VSH
             ax = axes[5]
@@ -1067,8 +1069,8 @@ if uploaded_files:
                 ax.set_xlim(0, 1)
             else:
                 ax.set_xlim(0, 1)
-            ax.set_title('VSH', fontweight='bold', fontsize=9)
-            ax.set_xlabel('v/v', fontsize=7)
+            ax.set_title('VSH\n(v/v)', fontweight='bold', fontsize=8, pad=18)
+            
             
             # Track 7: Net Pay
             ax = axes[6]
@@ -1078,7 +1080,7 @@ if uploaded_files:
                      extent=[0, 1, depth_max, depth_min], interpolation='nearest')
             ax.set_xticks([])
             ax.set_xlim(-0.5, 1.5)
-            ax.set_title('NET PAY', fontweight='bold', fontsize=9, color='#32CD32')
+            ax.set_title('NET PAY\n(Flag)', fontweight='bold', fontsize=8, color='#32CD32', pad=18)
             ax.grid(False)
             
             # Track 8: Litología
@@ -1093,7 +1095,7 @@ if uploaded_files:
                      extent=[0, 1, depth_max, depth_min], interpolation='nearest')
             ax.set_xticks([])
             ax.set_xlim(-0.5, 1.5)
-            ax.set_title('LITOLOGÍA', fontweight='bold', fontsize=9)
+            ax.set_title('LITOLOGÍA\n(Tipo)', fontweight='bold', fontsize=8, pad=18)
             ax.grid(False)
             
             # Leyenda de litología
