@@ -21,11 +21,350 @@ from modules.petrofisica import (
 from modules.pdf_export import create_pdf_report
 from modules.pdf_batch_export import create_pdf_batch_report
 
+
+LANG_OPTIONS = {
+    "Español": "es",
+    "English": "en",
+    "Français": "fr",
+}
+
+UI_TEXTS = {
+    "es": {
+        "sidebar_title": "⚙️ Configuración",
+        "language_selector": "🌐 Idioma",
+        "adjustable_params": "### 📋 Parámetros Ajustables",
+        "adjustable_desc": """
+Ajusta los siguientes parámetros según tus necesidades de análisis:
+
+- **Cutoffs**: Umbrales mínimos y máximos para identificar zonas productivas
+- **Archie**: Parámetros de la ecuación de Archie para cálculo de saturación
+""",
+        "cutoffs_header": "Cutoffs para Net Pay",
+        "phi_min": "Porosidad mínima (%)",
+        "vsh_max": "VSH máximo (%)",
+        "sw_max": "Sw máximo (%)",
+        "archie_header": "Parámetros de Archie",
+        "param_a": "Parámetro A",
+        "param_m": "Parámetro M (cementación)",
+        "param_n": "Parámetro N (saturación)",
+        "rw_label": "Resistividad agua (Rw) [ohm-m]",
+        "las_explorer": "📊 Explorador de Datos del Archivo LAS",
+        "available_columns": "Columnas disponibles",
+        "select_columns": "Selecciona columnas para visualizar",
+        "first_samples": "Primeras 100 muestras",
+        "column_stats": "Estadísticas de Columnas",
+        "detailed_info": "Información Detallada",
+        "hero_badge": "Petrofísica Computacional",
+        "hero_title": "INTERPRETACIÓN AUTOMATIZADA<br/>DE REGISTROS DE POZOS",
+        "hero_subtitle": "Herramienta para el procesamiento preliminar automatizado de registros de pozos",
+        "feature_visualization": "Visualización",
+        "feature_visualization_desc": "Registro profesional de 8 tracks",
+        "feature_multiwell": "Multi-Pozo",
+        "feature_multiwell_desc": "Procesamiento simultáneo por lotes",
+        "feature_export": "Exportación",
+        "feature_export_desc": "Reportes en PDF, Excel y CSV",
+        "feature_analysis": "Análisis",
+        "feature_analysis_desc": "Litología, Net Pay y saturación",
+        "curve_aliases": "Alias de curvas",
+        "export_formats": "Formatos export",
+        "columns": "columnas",
+        "upload_label": "📤 Carga uno o más archivos LAS (.las)",
+        "files_ready": "archivo(s) listos para procesar",
+        "processing": "📖 Procesando",
+        "well_banner_samples": "muestras",
+        "well_banner_file": "Archivo",
+        "of": "de",
+        "depth_identification": "Identificación de Profundidad",
+        "depth_start_metric": "Profundidad Inicial (ft)",
+        "depth_end_metric": "Profundidad Final (ft)",
+        "depth_interval_metric": "Intervalo (ft)",
+        "curve_mapping": "Mapeo de Curvas Disponibles",
+        "mapped_curves": "✓ Curvas mapeadas",
+        "dominant_matrix_detection": "Detección de Matriz Dominante",
+        "dominant_matrix": "Matriz Dominante",
+        "density": "Densidad (g/cc)",
+        "petrophysical_calcs": "Cálculos Petrofísicos",
+        "vsh_precalc": "✓ VSH: valores pre-calculados",
+        "vsh_calc": "✓ VSH: calculado (Larionov)",
+        "vsh_no_gr": "⚠️ VSH: No se puede calcular sin GR",
+        "porosity_precalc": "✓ Porosidad: valores pre-calculados",
+        "porosity_calc": "✓ Porosidad: calculada para",
+        "samples": "muestras",
+        "porosity_no_rhob": "⚠️ Porosidad: No se puede calcular sin RHOB",
+        "sw_precalc": "✓ Saturación: valores pre-calculados",
+        "sw_calc": "✓ Saturación: calculada para",
+        "sw_no_rt": "⚠️ Saturación: No se puede calcular sin RT",
+        "net_pay": "✓ Net pay",
+        "stat_summary": "Resumen Estadístico",
+        "prop_header": "Propiedad",
+        "mean_header": "Promedio",
+        "min_header": "Mínimo",
+        "max_header": "Máximo",
+        "valid_header": "Válidos",
+        "effective_porosity": "Porosidad Efectiva",
+        "clay_volume": "Volumen de Arcilla",
+        "water_saturation": "Saturación de Agua",
+        "permeability": "Permeabilidad",
+        "lith_distribution": "Distribución Litológica",
+        "lithology": "Litología",
+        "samples_label": "Muestras",
+        "percentage": "Porcentaje (%)",
+        "lith_composition": "Composición Litológica",
+        "petro_log_8_tracks": "Registro Petrofísico — 8 Tracks",
+        "depth_ft": "Profundidad (ft)",
+        "resistivity": "RESISTIVIDAD\n(ohm·m)",
+        "lithology_type": "LITOLOGÍA\n(Tipo)",
+        "export_results": "Exportación de Resultados",
+        "download_csv": "📥 Descargar CSV",
+        "download_excel": "📊 Descargar Excel",
+        "download_pdf": "📄 Descargar PDF",
+        "process_completed": "✅ Procesamiento completado",
+        "process_error": "❌ Error procesando",
+        "consolidated_export": "Exportación Consolidada — Todos los Pozos",
+        "download_pdf_report_batch": "📄 Descargar Reporte PDF Consolidado",
+        "download_pdf_batch": "📥 Descargar PDF Consolidado",
+        "download_csv_batch_btn": "📊 Descargar CSV Consolidado",
+        "download_csv_batch": "📥 Descargar CSV Consolidado",
+        "wells_processed": "pozo(s) procesado(s) exitosamente",
+        "empty_title": "Carga archivos LAS para comenzar el análisis",
+        "empty_desc": "Arrastra o selecciona uno o más archivos .LAS para procesarlos automáticamente",
+        "cap_1": "Lectura automática de LAS",
+        "cap_2": "Mapeo flexible de curvas",
+        "cap_3": "Detección de matriz",
+        "cap_4": "Cálculos petrofísicos",
+        "cap_5": "Visualización 8 tracks",
+        "cap_6": "Procesamiento batch",
+        "cap_7": "Exportación PDF/Excel/CSV",
+        "cap_8": "Litología y Net Pay",
+    },
+    "en": {
+        "sidebar_title": "⚙️ Settings",
+        "language_selector": "🌐 Language",
+        "adjustable_params": "### 📋 Adjustable Parameters",
+        "adjustable_desc": """
+Adjust the following parameters according to your analysis needs:
+
+- **Cutoffs**: Minimum/maximum thresholds to identify productive zones
+- **Archie**: Archie equation parameters for saturation calculation
+""",
+        "cutoffs_header": "Net Pay Cutoffs",
+        "phi_min": "Minimum porosity (%)",
+        "vsh_max": "Maximum VSH (%)",
+        "sw_max": "Maximum Sw (%)",
+        "archie_header": "Archie Parameters",
+        "param_a": "A Parameter",
+        "param_m": "M Parameter (cementation)",
+        "param_n": "N Parameter (saturation)",
+        "rw_label": "Water resistivity (Rw) [ohm-m]",
+        "las_explorer": "📊 LAS File Data Explorer",
+        "available_columns": "Available columns",
+        "select_columns": "Select columns to display",
+        "first_samples": "First 100 samples",
+        "column_stats": "Column statistics",
+        "detailed_info": "Detailed information",
+        "hero_badge": "Computational Petrophysics",
+        "hero_title": "AUTOMATED WELL LOG<br/>INTERPRETATION",
+        "hero_subtitle": "Tool for automated preliminary well-log processing",
+        "feature_visualization": "Visualization",
+        "feature_visualization_desc": "Professional 8-track log",
+        "feature_multiwell": "Multi-Well",
+        "feature_multiwell_desc": "Simultaneous batch processing",
+        "feature_export": "Export",
+        "feature_export_desc": "Reports in PDF, Excel and CSV",
+        "feature_analysis": "Analysis",
+        "feature_analysis_desc": "Lithology, Net Pay and saturation",
+        "curve_aliases": "Curve aliases",
+        "export_formats": "Export formats",
+        "columns": "columns",
+        "upload_label": "📤 Upload one or more LAS files (.las)",
+        "files_ready": "file(s) ready to process",
+        "processing": "📖 Processing",
+        "well_banner_samples": "samples",
+        "well_banner_file": "File",
+        "of": "of",
+        "depth_identification": "Depth Identification",
+        "depth_start_metric": "Start Depth (ft)",
+        "depth_end_metric": "End Depth (ft)",
+        "depth_interval_metric": "Interval (ft)",
+        "curve_mapping": "Available Curve Mapping",
+        "mapped_curves": "✓ Mapped curves",
+        "dominant_matrix_detection": "Dominant Matrix Detection",
+        "dominant_matrix": "Dominant Matrix",
+        "density": "Density (g/cc)",
+        "petrophysical_calcs": "Petrophysical Calculations",
+        "vsh_precalc": "✓ VSH: pre-calculated values",
+        "vsh_calc": "✓ VSH: calculated (Larionov)",
+        "vsh_no_gr": "⚠️ VSH: cannot be calculated without GR",
+        "porosity_precalc": "✓ Porosity: pre-calculated values",
+        "porosity_calc": "✓ Porosity: calculated for",
+        "samples": "samples",
+        "porosity_no_rhob": "⚠️ Porosity: cannot be calculated without RHOB",
+        "sw_precalc": "✓ Saturation: pre-calculated values",
+        "sw_calc": "✓ Saturation: calculated for",
+        "sw_no_rt": "⚠️ Saturation: cannot be calculated without RT",
+        "net_pay": "✓ Net pay",
+        "stat_summary": "Statistical Summary",
+        "prop_header": "Property",
+        "mean_header": "Mean",
+        "min_header": "Minimum",
+        "max_header": "Maximum",
+        "valid_header": "Valid",
+        "effective_porosity": "Effective Porosity",
+        "clay_volume": "Clay Volume",
+        "water_saturation": "Water Saturation",
+        "permeability": "Permeability",
+        "lith_distribution": "Lithology Distribution",
+        "lithology": "Lithology",
+        "samples_label": "Samples",
+        "percentage": "Percentage (%)",
+        "lith_composition": "Lithological Composition",
+        "petro_log_8_tracks": "Petrophysical Log — 8 Tracks",
+        "depth_ft": "Depth (ft)",
+        "resistivity": "RESISTIVITY\n(ohm·m)",
+        "lithology_type": "LITHOLOGY\n(Type)",
+        "export_results": "Export Results",
+        "download_csv": "📥 Download CSV",
+        "download_excel": "📊 Download Excel",
+        "download_pdf": "📄 Download PDF",
+        "process_completed": "✅ Processing completed",
+        "process_error": "❌ Error processing",
+        "consolidated_export": "Consolidated Export — All Wells",
+        "download_pdf_report_batch": "📄 Download Consolidated PDF Report",
+        "download_pdf_batch": "📥 Download Consolidated PDF",
+        "download_csv_batch_btn": "📊 Download Consolidated CSV",
+        "download_csv_batch": "📥 Download Consolidated CSV",
+        "wells_processed": "well(s) processed successfully",
+        "empty_title": "Upload LAS files to start the analysis",
+        "empty_desc": "Drag or select one or more .LAS files to process automatically",
+        "cap_1": "Automatic LAS reading",
+        "cap_2": "Flexible curve mapping",
+        "cap_3": "Matrix detection",
+        "cap_4": "Petrophysical calculations",
+        "cap_5": "8-track visualization",
+        "cap_6": "Batch processing",
+        "cap_7": "PDF/Excel/CSV export",
+        "cap_8": "Lithology and Net Pay",
+    },
+    "fr": {
+        "sidebar_title": "⚙️ Configuration",
+        "language_selector": "🌐 Langue",
+        "adjustable_params": "### 📋 Paramètres ajustables",
+        "adjustable_desc": """
+Ajustez les paramètres suivants selon vos besoins d'analyse :
+
+- **Cutoffs**: Seuils minimum/maximum pour identifier les zones productives
+- **Archie**: Paramètres de l'équation d'Archie pour le calcul de saturation
+""",
+        "cutoffs_header": "Seuils Net Pay",
+        "phi_min": "Porosité minimale (%)",
+        "vsh_max": "VSH maximal (%)",
+        "sw_max": "Sw maximal (%)",
+        "archie_header": "Paramètres d'Archie",
+        "param_a": "Paramètre A",
+        "param_m": "Paramètre M (cimentation)",
+        "param_n": "Paramètre N (saturation)",
+        "rw_label": "Résistivité de l'eau (Rw) [ohm-m]",
+        "las_explorer": "📊 Explorateur de données LAS",
+        "available_columns": "Colonnes disponibles",
+        "select_columns": "Sélectionnez les colonnes à afficher",
+        "first_samples": "100 premiers échantillons",
+        "column_stats": "Statistiques des colonnes",
+        "detailed_info": "Informations détaillées",
+        "hero_badge": "Pétrophysique computationnelle",
+        "hero_title": "INTERPRÉTATION AUTOMATISÉE<br/>DES DIAGRAPHIES DE PUITS",
+        "hero_subtitle": "Outil de traitement préliminaire automatisé des diagraphies",
+        "feature_visualization": "Visualisation",
+        "feature_visualization_desc": "Diagraphie professionnelle à 8 pistes",
+        "feature_multiwell": "Multi-puits",
+        "feature_multiwell_desc": "Traitement par lots simultané",
+        "feature_export": "Exportation",
+        "feature_export_desc": "Rapports en PDF, Excel et CSV",
+        "feature_analysis": "Analyse",
+        "feature_analysis_desc": "Lithologie, Net Pay et saturation",
+        "curve_aliases": "Alias de courbes",
+        "export_formats": "Formats d'export",
+        "columns": "colonnes",
+        "upload_label": "📤 Importez un ou plusieurs fichiers LAS (.las)",
+        "files_ready": "fichier(s) prêt(s) à traiter",
+        "processing": "📖 Traitement",
+        "well_banner_samples": "échantillons",
+        "well_banner_file": "Fichier",
+        "of": "sur",
+        "depth_identification": "Identification de profondeur",
+        "depth_start_metric": "Profondeur initiale (ft)",
+        "depth_end_metric": "Profondeur finale (ft)",
+        "depth_interval_metric": "Intervalle (ft)",
+        "curve_mapping": "Cartographie des courbes disponibles",
+        "mapped_curves": "✓ Courbes cartographiées",
+        "dominant_matrix_detection": "Détection de la matrice dominante",
+        "dominant_matrix": "Matrice dominante",
+        "density": "Densité (g/cc)",
+        "petrophysical_calcs": "Calculs pétrophysiques",
+        "vsh_precalc": "✓ VSH : valeurs pré-calculées",
+        "vsh_calc": "✓ VSH : calculé (Larionov)",
+        "vsh_no_gr": "⚠️ VSH : impossible à calculer sans GR",
+        "porosity_precalc": "✓ Porosité : valeurs pré-calculées",
+        "porosity_calc": "✓ Porosité : calculée pour",
+        "samples": "échantillons",
+        "porosity_no_rhob": "⚠️ Porosité : impossible à calculer sans RHOB",
+        "sw_precalc": "✓ Saturation : valeurs pré-calculées",
+        "sw_calc": "✓ Saturation : calculée pour",
+        "sw_no_rt": "⚠️ Saturation : impossible à calculer sans RT",
+        "net_pay": "✓ Net pay",
+        "stat_summary": "Résumé statistique",
+        "prop_header": "Propriété",
+        "mean_header": "Moyenne",
+        "min_header": "Minimum",
+        "max_header": "Maximum",
+        "valid_header": "Valides",
+        "effective_porosity": "Porosité effective",
+        "clay_volume": "Volume d'argile",
+        "water_saturation": "Saturation en eau",
+        "permeability": "Perméabilité",
+        "lith_distribution": "Distribution lithologique",
+        "lithology": "Lithologie",
+        "samples_label": "Échantillons",
+        "percentage": "Pourcentage (%)",
+        "lith_composition": "Composition lithologique",
+        "petro_log_8_tracks": "Diagraphie pétrophysique — 8 pistes",
+        "depth_ft": "Profondeur (ft)",
+        "resistivity": "RÉSISTIVITÉ\n(ohm·m)",
+        "lithology_type": "LITHOLOGIE\n(Type)",
+        "export_results": "Exportation des résultats",
+        "download_csv": "📥 Télécharger CSV",
+        "download_excel": "📊 Télécharger Excel",
+        "download_pdf": "📄 Télécharger PDF",
+        "process_completed": "✅ Traitement terminé",
+        "process_error": "❌ Erreur lors du traitement",
+        "consolidated_export": "Exportation consolidée — Tous les puits",
+        "download_pdf_report_batch": "📄 Télécharger le rapport PDF consolidé",
+        "download_pdf_batch": "📥 Télécharger PDF consolidé",
+        "download_csv_batch_btn": "📊 Télécharger CSV consolidé",
+        "download_csv_batch": "📥 Télécharger CSV consolidé",
+        "wells_processed": "puits traité(s) avec succès",
+        "empty_title": "Importez des fichiers LAS pour démarrer l'analyse",
+        "empty_desc": "Faites glisser ou sélectionnez un ou plusieurs fichiers .LAS pour un traitement automatique",
+        "cap_1": "Lecture automatique des LAS",
+        "cap_2": "Cartographie flexible des courbes",
+        "cap_3": "Détection de matrice",
+        "cap_4": "Calculs pétrophysiques",
+        "cap_5": "Visualisation 8 pistes",
+        "cap_6": "Traitement batch",
+        "cap_7": "Export PDF/Excel/CSV",
+        "cap_8": "Lithologie et Net Pay",
+    }
+}
+
+
+def t(key):
+    lang = st.session_state.get("app_lang", "es")
+    return UI_TEXTS.get(lang, UI_TEXTS["es"]).get(key, UI_TEXTS["es"].get(key, key))
+
 # ==========================================================
 # CONFIGURACIÓN DE STREAMLIT
 # ==========================================================
 st.set_page_config(
-    page_title="Interpretación Automatizada de Registros de Pozos",
+    page_title="AI_WELL_LOG - Well Log Analysis",
     page_icon="🪨",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -418,33 +757,66 @@ st.markdown("""
         margin: 0.15rem 0 0;
         font-weight: 500;
     }
+    
+    /* === LANGUAGE SELECTOR TEXT COLOR === */
+    section[data-testid="stSidebar"] [data-testid="stSelectbox"] {
+        color: #0c4a6e !important;
+    }
+    section[data-testid="stSidebar"] [data-testid="stSelectbox"] * {
+        color: #0c4a6e !important;
+    }
+    section[data-testid="stSidebar"] [data-testid="stSelectbox"] button {
+        color: #0c4a6e !important;
+    }
+    section[data-testid="stSidebar"] [data-testid="stSelectbox"] button span {
+        color: #0c4a6e !important;
+    }
+    section[data-testid="stSidebar"] [data-testid="stSelectbox"] button span div {
+        color: #0c4a6e !important;
+    }
+    section[data-testid="stSidebar"] div[role="listbox"] {
+        color: #0c4a6e !important;
+    }
+    section[data-testid="stSidebar"] div[role="listbox"] * {
+        color: #0c4a6e !important;
+    }
     </style>
 """, unsafe_allow_html=True)
 
 # ==========================================================
 # SIDEBAR - CONFIGURACIÓN
 # ==========================================================
-st.sidebar.title("⚙️ Configuración")
+if "app_lang" not in st.session_state:
+    st.session_state.app_lang = "es"
 
-st.sidebar.markdown("""
-### 📋 Parámetros Ajustables
+default_lang_label = next(
+    (label for label, code in LANG_OPTIONS.items() if code == st.session_state.app_lang),
+    "Español"
+)
 
-Ajusta los siguientes parámetros según tus necesidades de análisis:
+selected_lang_label = st.sidebar.selectbox(
+    "🌐 Idioma / Language / Langue",
+    options=list(LANG_OPTIONS.keys()),
+    index=list(LANG_OPTIONS.keys()).index(default_lang_label),
+    key="lang_selector"
+)
+st.session_state.app_lang = LANG_OPTIONS[selected_lang_label]
 
-- **Cutoffs**: Umbrales mínimos y máximos para identificar zonas productivas
-- **Archie**: Parámetros de la ecuación de Archie para cálculo de saturación
-""")
+st.sidebar.title(t("sidebar_title"))
 
-st.sidebar.subheader("Cutoffs para Net Pay")
-phi_cutoff = st.sidebar.slider("Porosidad mínima (%)", 0.1, 20.0, 6.0, step=0.1) / 100
-vsh_cutoff = st.sidebar.slider("VSH máximo (%)", 10.0, 80.0, 50.0, step=5.0) / 100
-sw_cutoff = st.sidebar.slider("Sw máximo (%)", 30.0, 100.0, 70.0, step=5.0) / 100
+st.sidebar.markdown(t("adjustable_params"))
+st.sidebar.markdown(t("adjustable_desc"))
 
-st.sidebar.subheader("Parámetros de Archie")
-config_a = st.sidebar.slider("Parámetro A", 0.5, 2.0, 1.0, step=0.05)
-config_m = st.sidebar.slider("Parámetro M (cementación)", 1.8, 2.5, 2.0, step=0.05)
-config_n = st.sidebar.slider("Parámetro N (saturación)", 1.8, 2.5, 2.0, step=0.05)
-config_rw = st.sidebar.slider("Resistividad agua (Rw) [ohm-m]", 0.01, 0.5, 0.05, step=0.01)
+st.sidebar.subheader(t("cutoffs_header"))
+phi_cutoff = st.sidebar.slider(t("phi_min"), 0.1, 20.0, 6.0, step=0.1) / 100
+vsh_cutoff = st.sidebar.slider(t("vsh_max"), 10.0, 80.0, 50.0, step=5.0) / 100
+sw_cutoff = st.sidebar.slider(t("sw_max"), 30.0, 100.0, 70.0, step=5.0) / 100
+
+st.sidebar.subheader(t("archie_header"))
+config_a = st.sidebar.slider(t("param_a"), 0.5, 2.0, 1.0, step=0.05)
+config_m = st.sidebar.slider(t("param_m"), 1.8, 2.5, 2.0, step=0.05)
+config_n = st.sidebar.slider(t("param_n"), 1.8, 2.5, 2.0, step=0.05)
+config_rw = st.sidebar.slider(t("rw_label"), 0.01, 0.5, 0.05, step=0.01)
 
 # Actualizar configuración global
 PetroConfig.A = config_a
@@ -461,12 +833,12 @@ PetroConfig.SW_CUTOFF = sw_cutoff
 
 def display_las_viewer(df, file_index):
     """Muestra un explorador de datos interactivo del archivo LAS"""
-    with st.expander("📊 Explorador de Datos del Archivo LAS", expanded=False):
-        st.subheader("Columnas disponibles")
+    with st.expander(t("las_explorer"), expanded=False):
+        st.subheader(t("available_columns"))
         
         all_columns = df.columns.tolist()
         selected_columns = st.multiselect(
-            "Selecciona columnas para visualizar",
+            t("select_columns"),
             all_columns,
             default=all_columns[:min(8, len(all_columns))],
             key=f"col_selector_{file_index}"
@@ -474,7 +846,7 @@ def display_las_viewer(df, file_index):
         
         if selected_columns:
             # Tabla de datos
-            st.subheader("Primeras 100 muestras")
+            st.subheader(t("first_samples"))
             st.dataframe(
                 df[selected_columns].head(100),
                 use_container_width=True,
@@ -482,12 +854,12 @@ def display_las_viewer(df, file_index):
             )
             
             # Estadísticas
-            st.subheader("Estadísticas de Columnas")
+            st.subheader(t("column_stats"))
             stats_display = df[selected_columns].describe().T
             st.dataframe(stats_display, use_container_width=True)
             
             # Info de columnas
-            st.subheader("Información Detallada")
+            st.subheader(t("detailed_info"))
             col_info_list = []
             for col in selected_columns:
                 col_info_list.append({
@@ -506,12 +878,12 @@ def display_las_viewer(df, file_index):
 # MAIN
 # ==========================================================
 # Interfaz inicial profesional - Hero Section
-st.markdown("""
+st.markdown(f"""
 <div class="hero-container">
-    <div class="hero-badge">Petrofísica Computacional</div>
-    <h1 class="hero-title">INTERPRETACIÓN AUTOMATIZADA<br/>DE REGISTROS DE POZOS</h1>
+    <div class="hero-badge">{t('hero_badge')}</div>
+    <h1 class="hero-title">{t('hero_title')}</h1>
     <div class="hero-divider"></div>
-    <p class="hero-subtitle">Herramienta para el procesamiento preliminar automatizado de registros de pozos</p>
+    <p class="hero-subtitle">{t('hero_subtitle')}</p>
     <div class="hero-stats">
         <div class="hero-stat">
             <span class="hero-stat-value">8</span>
@@ -519,11 +891,11 @@ st.markdown("""
         </div>
         <div class="hero-stat">
             <span class="hero-stat-value">40+</span>
-            <span class="hero-stat-label">Alias de curvas</span>
+            <span class="hero-stat-label">{t('curve_aliases')}</span>
         </div>
         <div class="hero-stat">
             <span class="hero-stat-value">3</span>
-            <span class="hero-stat-label">Formatos export</span>
+            <span class="hero-stat-label">{t('export_formats')}</span>
         </div>
     </div>
 </div>
@@ -532,52 +904,52 @@ st.markdown("""
 # Características en tarjetas limpias
 col1, col2, col3, col4 = st.columns(4, gap="small")
 with col1:
-    st.markdown("""
+    st.markdown(f"""
     <div class="feature-card">
         <div class="feature-icon icon-blue">📊</div>
-        <p class="feature-title">Visualización</p>
-        <p class="feature-desc">Registro profesional de 8 tracks</p>
+        <p class="feature-title">{t('feature_visualization')}</p>
+        <p class="feature-desc">{t('feature_visualization_desc')}</p>
     </div>
     """, unsafe_allow_html=True)
 
 with col2:
-    st.markdown("""
+    st.markdown(f"""
     <div class="feature-card">
         <div class="feature-icon icon-purple">⛏️</div>
-        <p class="feature-title">Multi-Pozo</p>
-        <p class="feature-desc">Procesamiento simultáneo por lotes</p>
+        <p class="feature-title">{t('feature_multiwell')}</p>
+        <p class="feature-desc">{t('feature_multiwell_desc')}</p>
     </div>
     """, unsafe_allow_html=True)
 
 with col3:
-    st.markdown("""
+    st.markdown(f"""
     <div class="feature-card">
         <div class="feature-icon icon-emerald">📄</div>
-        <p class="feature-title">Exportación</p>
-        <p class="feature-desc">Reportes en PDF, Excel y CSV</p>
+        <p class="feature-title">{t('feature_export')}</p>
+        <p class="feature-desc">{t('feature_export_desc')}</p>
     </div>
     """, unsafe_allow_html=True)
 
 with col4:
-    st.markdown("""
+    st.markdown(f"""
     <div class="feature-card">
         <div class="feature-icon icon-amber">🔬</div>
-        <p class="feature-title">Análisis</p>
-        <p class="feature-desc">Litología, Net Pay y saturación</p>
+        <p class="feature-title">{t('feature_analysis')}</p>
+        <p class="feature-desc">{t('feature_analysis_desc')}</p>
     </div>
     """, unsafe_allow_html=True)
 
 st.markdown("<div style='height: 0.2rem;'></div>", unsafe_allow_html=True)
 
 # Upload de múltiples archivos
-uploaded_files = st.file_uploader("📤 Carga uno o más archivos LAS (.las)", type=['las'], accept_multiple_files=True, key='las_files', label_visibility="visible")
+uploaded_files = st.file_uploader(t("upload_label"), type=['las'], accept_multiple_files=True, key='las_files', label_visibility="visible")
 
 if uploaded_files:
     total_files = len(uploaded_files)
     st.markdown(f"""
     <div style="display: flex; align-items: center; gap: 0.6rem; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 10px; padding: 0.6rem 1rem; margin-bottom: 0.5rem;">
         <span style="font-size: 1.2rem;">📊</span>
-        <span style="color: #0c4a6e; font-weight: 600; font-size: 0.9rem;">{total_files} archivo(s) listos para procesar</span>
+        <span style="color: #0c4a6e; font-weight: 600; font-size: 0.9rem;">{total_files} {t('files_ready')}</span>
     </div>
     """, unsafe_allow_html=True)
     
@@ -590,7 +962,7 @@ if uploaded_files:
             # ======================================================
             # LECTURA Y LIMPIEZA DE DATOS
             # ======================================================
-            st.info(f"📖 Procesando: {uploaded_file.name} ({file_idx}/{total_files})...")
+            st.info(f"{t('processing')}: {uploaded_file.name} ({file_idx}/{total_files})...")
             
             # Guardar archivo temporal
             temp_path = f'/tmp/temp_well_{file_idx}.las'
@@ -605,7 +977,7 @@ if uploaded_files:
             st.markdown(f"""
             <div class="well-banner">
                 <p class="well-banner-name">🛢️ {well_name}</p>
-                <p class="well-banner-meta">{len(df.columns)} columnas · {len(df)} muestras · Archivo {file_idx} de {total_files}</p>
+                <p class="well-banner-meta">{len(df.columns)} {t('columns')} · {len(df)} {t('well_banner_samples')} · {t('well_banner_file')} {file_idx} {t('of')} {total_files}</p>
             </div>
             """, unsafe_allow_html=True)
             
@@ -617,7 +989,7 @@ if uploaded_files:
             # ======================================================
             # PASO 1: IDENTIFICAR PROFUNDIDAD
             # ======================================================
-            st.markdown('<div class="section-header"><span class="section-number">1</span><span class="section-title">Identificación de Profundidad</span></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-header"><span class="section-number">1</span><span class="section-title">{t("depth_identification")}</span></div>', unsafe_allow_html=True)
             
             depth_aliases = ['DEPTH', 'DEPT', 'MD', 'MEASURED_DEPTH', 'TVD', 'TVDSS', 
                             'TDEP', 'MD_FT', 'DEPTM', 'INDEX']
@@ -640,16 +1012,16 @@ if uploaded_files:
             
             col1, col2, col3 = st.columns(3)
             with col1:
-                st.metric("Profundidad Inicial (ft)", f"{depth_ft_min:.1f}")
+                st.metric(t("depth_start_metric"), f"{depth_ft_min:.1f}")
             with col2:
-                st.metric("Profundidad Final (ft)", f"{depth_ft_max:.1f}")
+                st.metric(t("depth_end_metric"), f"{depth_ft_max:.1f}")
             with col3:
-                st.metric("Intervalo (ft)", f"{depth_ft_max - depth_ft_min:.1f}")
+                st.metric(t("depth_interval_metric"), f"{depth_ft_max - depth_ft_min:.1f}")
             
             # ======================================================
             # PASO 2: MAPEO DE CURVAS
             # ======================================================
-            st.markdown('<div class="section-header"><span class="section-number">2</span><span class="section-title">Mapeo de Curvas Disponibles</span></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-header"><span class="section-number">2</span><span class="section-title">{t("curve_mapping")}</span></div>', unsafe_allow_html=True)
             
             curve_aliases = {
                 'CALI': ['CALI', 'CAL', 'CAL1', 'CALIPER'],
@@ -682,12 +1054,12 @@ if uploaded_files:
                     df[standard_name] = np.nan
             
             available_str = ", ".join([f"{k} ({v})" for k, v in available_curves.items()])
-            st.write(f"✓ Curvas mapeadas: {available_str}")
+            st.write(f"{t('mapped_curves')}: {available_str}")
             
             # ======================================================
             # PASO 3: DETECCIÓN DE MATRIZ
             # ======================================================
-            st.markdown('<div class="section-header"><span class="section-number">3</span><span class="section-title">Detección de Matriz Dominante</span></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-header"><span class="section-number">3</span><span class="section-title">{t("dominant_matrix_detection")}</span></div>', unsafe_allow_html=True)
             
             dominant_matrix, dominant_rho = detect_dominant_matrix(df)
             PetroConfig.DOMINANT_MATRIX = dominant_matrix
@@ -701,14 +1073,14 @@ if uploaded_files:
             
             col1, col2 = st.columns(2)
             with col1:
-                st.metric("Matriz Dominante", dominant_matrix)
+                st.metric(t("dominant_matrix"), dominant_matrix)
             with col2:
-                st.metric("Densidad (g/cc)", f"{dominant_rho:.3f}")
+                st.metric(t("density"), f"{dominant_rho:.3f}")
             
             # ======================================================
             # PASO 4: CÁLCULOS PETROFÍSICOS
             # ======================================================
-            st.markdown('<div class="section-header"><span class="section-number">4</span><span class="section-title">Cálculos Petrofísicos</span></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-header"><span class="section-number">4</span><span class="section-title">{t("petrophysical_calcs")}</span></div>', unsafe_allow_html=True)
             
             progress = st.progress(0)
             
@@ -721,7 +1093,7 @@ if uploaded_files:
             
             # VSH
             if df['VSH'].notna().any():
-                st.write("✓ VSH: valores pre-calculados")
+                st.write(t("vsh_precalc"))
             elif df['GR'].notna().any():
                 gr_valid = df['GR'].dropna()
                 gr_min = gr_valid.quantile(0.02)
@@ -729,10 +1101,10 @@ if uploaded_files:
                 df['VSH'] = df['GR'].apply(
                     lambda x: PetroPhysics.calc_vsh_larionov(x, gr_min, gr_max)
                 )
-                st.write(f"✓ VSH: calculado (Larionov)")
+                st.write(t("vsh_calc"))
             else:
                 df['VSH'] = np.nan
-                st.warning("⚠️ VSH: No se puede calcular sin GR")
+                st.warning(t("vsh_no_gr"))
             
             progress.progress(40)
             
@@ -769,7 +1141,7 @@ if uploaded_files:
             
             if df['PHIT'].notna().any():
                 df['PHI_T'] = df['PHIT'].copy()
-                st.write("✓ Porosidad: valores pre-calculados")
+                st.write(t("porosity_precalc"))
             elif df['RHOB'].notna().any():
                 for idx, row in df.iterrows():
                     if pd.notna(row['RHOB']):
@@ -785,9 +1157,9 @@ if uploaded_files:
                             )
                         df.loc[idx, 'PHI_T'] = phi_t
                 
-                st.write(f"✓ Porosidad: calculada para {df['PHI_T'].notna().sum()} muestras")
+                st.write(f"{t('porosity_calc')} {df['PHI_T'].notna().sum()} {t('samples')}")
             else:
-                st.warning("⚠️ Porosidad: No se puede calcular sin RHOB")
+                st.warning(t("porosity_no_rhob"))
             
             # Porosidad efectiva
             for idx, row in df.iterrows():
@@ -800,7 +1172,7 @@ if uploaded_files:
             # Saturación
             df['SW'] = np.nan
             if df['SW'].notna().any():
-                st.write("✓ Saturación: valores pre-calculados")
+                st.write(t("sw_precalc"))
             elif df['RT'].notna().any():
                 for idx, row in df.iterrows():
                     sw = PetroPhysics.calc_water_saturation(
@@ -809,9 +1181,9 @@ if uploaded_files:
                         PetroConfig.N, PetroConfig.RW
                     )
                     df.loc[idx, 'SW'] = sw
-                st.write(f"✓ Saturación: calculada para {df['SW'].notna().sum()} muestras")
+                st.write(f"{t('sw_calc')} {df['SW'].notna().sum()} {t('samples')}")
             else:
-                st.warning("⚠️ Saturación: No se puede calcular sin RT")
+                st.warning(t("sw_no_rt"))
             
             # Permeabilidad
             df['PERM'] = np.nan
@@ -834,19 +1206,19 @@ if uploaded_files:
             net_pay = df['IS_PAY'].sum()
             
             progress.progress(100)
-            st.write(f"✓ Net pay: {net_pay} muestras ({100*net_pay/len(df):.1f}%)")
+            st.write(f"{t('net_pay')}: {net_pay} {t('samples')} ({100*net_pay/len(df):.1f}%)")
             
             # ======================================================
             # RESUMEN ESTADÍSTICO
             # ======================================================
-            st.markdown('<div class="section-header"><span class="section-number">5</span><span class="section-title">Resumen Estadístico</span></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-header"><span class="section-number">5</span><span class="section-title">{t("stat_summary")}</span></div>', unsafe_allow_html=True)
             
             stats_dict = {}
             
-            for col, label in [('PHI_E', 'Porosidad Efectiva'), 
-                               ('VSH', 'Volumen de Arcilla'),
-                               ('SW', 'Saturación de Agua'),
-                               ('PERM', 'Permeabilidad')]:
+            for col, label in [('PHI_E', t('effective_porosity')), 
+                               ('VSH', t('clay_volume')),
+                               ('SW', t('water_saturation')),
+                               ('PERM', t('permeability'))]:
                 if df[col].notna().any():
                     valid_data = df[df[col] > 0][col] if col == 'PERM' else df[col]
                     valid_data = valid_data[valid_data.notna()]
@@ -868,25 +1240,25 @@ if uploaded_files:
             
             # Mostrar tabla de estadísticas
             stats_df = pd.DataFrame({
-                'Propiedad': stats_dict.keys(),
-                'Promedio': [f"{v['mean']:.4f}" if v['mean'] is not None else "-" for v in stats_dict.values()],
-                'Mínimo': [f"{v['min']:.4f}" if v['min'] is not None else "-" for v in stats_dict.values()],
-                'Máximo': [f"{v['max']:.4f}" if v['max'] is not None else "-" for v in stats_dict.values()],
-                'Válidos': [v['valid'] for v in stats_dict.values()],
+                t('prop_header'): stats_dict.keys(),
+                t('mean_header'): [f"{v['mean']:.4f}" if v['mean'] is not None else "-" for v in stats_dict.values()],
+                t('min_header'): [f"{v['min']:.4f}" if v['min'] is not None else "-" for v in stats_dict.values()],
+                t('max_header'): [f"{v['max']:.4f}" if v['max'] is not None else "-" for v in stats_dict.values()],
+                t('valid_header'): [v['valid'] for v in stats_dict.values()],
             })
             
             st.dataframe(stats_df, use_container_width=True, hide_index=True)
             
             # Distribución litológica - Mejorada
             if 'LITOLOGIA' in df.columns:
-                st.markdown('<div class="section-header"><span class="section-number">6</span><span class="section-title">Distribución Litológica</span></div>', unsafe_allow_html=True)
+                st.markdown(f'<div class="section-header"><span class="section-number">6</span><span class="section-title">{t("lith_distribution")}</span></div>', unsafe_allow_html=True)
                 lith_counts = df['LITOLOGIA'].value_counts()
                 lith_pct = (lith_counts / len(df) * 100).round(1)
                 
                 lith_df = pd.DataFrame({
-                    'Litología': lith_counts.index,
-                    'Muestras': lith_counts.values,
-                    'Porcentaje (%)': lith_pct.values
+                    t('lithology'): lith_counts.index,
+                    t('samples_label'): lith_counts.values,
+                    t('percentage'): lith_pct.values
                 })
                 
                 col1, col2 = st.columns([1, 1.5])
@@ -907,7 +1279,7 @@ if uploaded_files:
                     for autotext in autotexts:
                         autotext.set_color('white')
                         autotext.set_fontweight('bold')
-                    ax.set_title('Composición Litológica', fontweight='bold', fontsize=11, pad=10)
+                    ax.set_title(t('lith_composition'), fontweight='bold', fontsize=11, pad=10)
                     plt.tight_layout()
                     st.pyplot(fig, use_container_width=True)
             
@@ -915,7 +1287,7 @@ if uploaded_files:
             # ======================================================
             # VISUALIZACIÓN DEL REGISTRO
             # ======================================================
-            st.markdown('<div class="section-header"><span class="section-number">7</span><span class="section-title">Registro Petrofísico — 8 Tracks</span></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-header"><span class="section-number">7</span><span class="section-title">{t("petro_log_8_tracks")}</span></div>', unsafe_allow_html=True)
             
             depth_min_data, depth_max_data = get_valid_data_range(df)
             depth_min = depth_min_data
@@ -950,7 +1322,7 @@ if uploaded_files:
                 ax.yaxis.set_minor_locator(AutoMinorLocator(2))
                 ax.margins(0)
                 if i == 0:
-                    ax.set_ylabel('Profundidad (ft)', fontsize=9, fontweight='bold')
+                    ax.set_ylabel(t('depth_ft'), fontsize=9, fontweight='bold')
                     ax.tick_params(axis='y', which='major', labelsize=7, left=True, labelleft=True)
                     ax.tick_params(axis='y', which='minor', left=True, length=3)
             
@@ -1055,7 +1427,7 @@ if uploaded_files:
             
             ax.grid(True, alpha=0.3, which='both')
             ax.legend(loc='upper right', fontsize=5, ncol=2)
-            ax.set_title('RESISTIVIDAD\n(ohm·m)', fontweight='bold', fontsize=8, color='darkred', pad=18)
+            ax.set_title(t('resistivity'), fontweight='bold', fontsize=8, color='darkred', pad=18)
             
             
             # Track 5: Porosidad
@@ -1111,7 +1483,7 @@ if uploaded_files:
                      extent=[0, 1, depth_max, depth_min], interpolation='nearest')
             ax.set_xticks([])
             ax.set_xlim(-0.5, 1.5)
-            ax.set_title('LITOLOGÍA\n(Tipo)', fontweight='bold', fontsize=8, pad=18)
+            ax.set_title(t('lithology_type'), fontweight='bold', fontsize=8, pad=18)
             ax.grid(False)
             
             # Leyenda de litología
@@ -1126,7 +1498,7 @@ if uploaded_files:
             # ======================================================
             # EXPORTACIÓN
             # ======================================================
-            st.markdown('<div class="section-header"><span class="section-number">8</span><span class="section-title">Exportación de Resultados</span></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="section-header"><span class="section-number">8</span><span class="section-title">{t("export_results")}</span></div>', unsafe_allow_html=True)
             
             col1, col2, col3 = st.columns(3)
             
@@ -1138,7 +1510,7 @@ if uploaded_files:
                 csv_str = csv_data.to_csv(index=False)
                 csv_bytes = csv_str.encode('utf-8')
                 st.download_button(
-                    label="📥 Descargar CSV",
+                    label=t("download_csv"),
                     data=csv_bytes,
                     file_name=f"{well_name}_results.csv",
                     mime="text/csv",
@@ -1152,7 +1524,7 @@ if uploaded_files:
                     csv_data.to_excel(writer, sheet_name='Datos', index=False)
                 excel_bytes = excel_buffer.getvalue()
                 st.download_button(
-                    label="📊 Descargar Excel",
+                    label=t("download_excel"),
                     data=excel_bytes,
                     file_name=f"{well_name}_results.xlsx",
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -1173,10 +1545,17 @@ if uploaded_files:
                     'SW_CUTOFF': PetroConfig.SW_CUTOFF,
                 }
                 
-                pdf_buffer = create_pdf_report(df, well_name, config_dict, stats_dict, available_curves)
+                pdf_buffer = create_pdf_report(
+                    df,
+                    well_name,
+                    config_dict,
+                    stats_dict,
+                    available_curves,
+                    language=st.session_state.get("app_lang", "es")
+                )
                 pdf_bytes = pdf_buffer.getvalue()
                 st.download_button(
-                    label="📄 Descargar PDF",
+                    label=t("download_pdf"),
                     data=pdf_bytes,
                     file_name=f"{well_name}_analysis.pdf",
                     mime="application/pdf",
@@ -1192,7 +1571,7 @@ if uploaded_files:
                 'curve_mapping': available_curves
             })
             
-            st.success("✅ Procesamiento completado")
+            st.success(t("process_completed"))
             
             # Limpiar archivo temporal
             import os
@@ -1200,7 +1579,7 @@ if uploaded_files:
                 os.remove(temp_path)
         
         except Exception as e:
-            st.error(f"❌ Error procesando {uploaded_file.name}: {str(e)}")
+            st.error(f"{t('process_error')} {uploaded_file.name}: {str(e)}")
             # Limpiar archivo temporal en caso de error
             import os
             temp_path = f'/tmp/temp_well_{file_idx}.las'
@@ -1212,16 +1591,19 @@ if uploaded_files:
     # ======================================================
     if all_wells_data:
         st.markdown("---")
-        st.markdown('<div class="section-header"><span class="section-number">★</span><span class="section-title">Exportación Consolidada — Todos los Pozos</span></div>', unsafe_allow_html=True)
+        st.markdown(f'<div class="section-header"><span class="section-number">★</span><span class="section-title">{t("consolidated_export")}</span></div>', unsafe_allow_html=True)
         
         col1, col2 = st.columns(2)
         
         # PDF consolidado
         with col1:
-            if st.button("📄 Descargar Reporte PDF Consolidado", key="btn_pdf_batch"):
-                pdf_buffer = create_pdf_batch_report(all_wells_data)
+            if st.button(t("download_pdf_report_batch"), key="btn_pdf_batch"):
+                pdf_buffer = create_pdf_batch_report(
+                    all_wells_data,
+                    language=st.session_state.get("app_lang", "es")
+                )
                 st.download_button(
-                    label="📥 Descargar PDF Consolidado",
+                    label=t("download_pdf_batch"),
                     data=pdf_buffer.getvalue(),
                     file_name=f"Analisis_Consolidado_{len(all_wells_data)}_pozos.pdf",
                     mime="application/pdf",
@@ -1230,7 +1612,7 @@ if uploaded_files:
         
         # CSV consolidado
         with col2:
-            if st.button("📊 Descargar CSV Consolidado", key="btn_csv_batch"):
+            if st.button(t("download_csv_batch_btn"), key="btn_csv_batch"):
                 # Concatenar todos los DataFrames
                 combined_df = pd.concat([
                     well['df'][['DEPTH_FT', 'GR', 'RHOB', 'NPHI', 'RT', 
@@ -1242,30 +1624,30 @@ if uploaded_files:
                 csv_str = combined_df.to_csv()
                 csv_bytes = csv_str.encode('utf-8')
                 st.download_button(
-                    label="📥 Descargar CSV Consolidado",
+                    label=t("download_csv_batch"),
                     data=csv_bytes,
                     file_name=f"Análisis_Consolidado_{len(all_wells_data)}_pozos.csv",
                     mime="text/csv",
                     key="download_csv_batch"
                 )
         
-        st.success(f"✅ {len(all_wells_data)} pozo(s) procesado(s) exitosamente")
+        st.success(f"✅ {len(all_wells_data)} {t('wells_processed')}")
 
 else:
-    st.markdown("""
+    st.markdown(f"""
     <div class="empty-state">
         <div class="empty-state-icon">📂</div>
-        <p class="empty-state-title">Carga archivos LAS para comenzar el análisis</p>
-        <p class="empty-state-desc">Arrastra o selecciona uno o más archivos .LAS para procesarlos automáticamente</p>
+        <p class="empty-state-title">{t('empty_title')}</p>
+        <p class="empty-state-desc">{t('empty_desc')}</p>
         <div class="capability-grid">
-            <div class="capability-item"><span class="capability-check">✓</span> Lectura automática de LAS</div>
-            <div class="capability-item"><span class="capability-check">✓</span> Mapeo flexible de curvas</div>
-            <div class="capability-item"><span class="capability-check">✓</span> Detección de matriz</div>
-            <div class="capability-item"><span class="capability-check">✓</span> Cálculos petrofísicos</div>
-            <div class="capability-item"><span class="capability-check">✓</span> Visualización 8 tracks</div>
-            <div class="capability-item"><span class="capability-check">✓</span> Procesamiento batch</div>
-            <div class="capability-item"><span class="capability-check">✓</span> Exportación PDF/Excel/CSV</div>
-            <div class="capability-item"><span class="capability-check">✓</span> Litología y Net Pay</div>
+            <div class="capability-item"><span class="capability-check">✓</span> {t('cap_1')}</div>
+            <div class="capability-item"><span class="capability-check">✓</span> {t('cap_2')}</div>
+            <div class="capability-item"><span class="capability-check">✓</span> {t('cap_3')}</div>
+            <div class="capability-item"><span class="capability-check">✓</span> {t('cap_4')}</div>
+            <div class="capability-item"><span class="capability-check">✓</span> {t('cap_5')}</div>
+            <div class="capability-item"><span class="capability-check">✓</span> {t('cap_6')}</div>
+            <div class="capability-item"><span class="capability-check">✓</span> {t('cap_7')}</div>
+            <div class="capability-item"><span class="capability-check">✓</span> {t('cap_8')}</div>
         </div>
     </div>
     """, unsafe_allow_html=True)
